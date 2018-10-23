@@ -2,6 +2,8 @@ import com.endava.utils.UtilProprieties;
 import org.junit.jupiter.api.*;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +17,14 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+// TODO: What is parameterized tests?
+// TODO: Why Jarco isn't working?
+
 
 public class UtilProprietiesTest {
 
-    static UtilProprieties properties;
+    @Parameterized.Parameter
+    public static UtilProprieties properties;
 
     @BeforeAll
     static void setupBeforeAll() {
@@ -42,7 +48,7 @@ public class UtilProprietiesTest {
      void mockTestForIsNumber() {
         UtilProprieties prop1 = mock(UtilProprieties.class);
         assertTrue(prop1.isNumber(Integer.toString(anyInt())));
-         verifyNoMoreInteractions(prop1);
+        verifyNoMoreInteractions(prop1);
     }
 
     private final MocksCollector mocksCollector = new MocksCollector();
@@ -57,7 +63,17 @@ public class UtilProprietiesTest {
         } catch (Exception ex) {
             //ex.printStackTrace();
         }
+    }
 
+    @Parameterized.Parameter
+    public static Map<String, Integer> expected = new HashMap<>();
+
+    @Test
+    public void testShouldReturnOnlyIntProprieties() {
+        expected.put("intVal", 10);
+        expected.put("password", 789);
+        expected.put("intVal3", 4);
+        assertEquals(expected, properties.getIntProprieties());
     }
 
     @Test

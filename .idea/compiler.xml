@@ -6,13 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="MainModule" />
+        <module name="Main" />
+        <module name="Test" />
+        <module name="Tests" />
         <module name="Utils" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Main" target="1.8" />
       <module name="MainModule" target="1.8" />
       <module name="ModularityProject" target="1.8" />
+      <module name="Test" target="1.8" />
+      <module name="Tests" target="1.8" />
       <module name="Utils" target="1.8" />
     </bytecodeTargetLevel>
   </component>

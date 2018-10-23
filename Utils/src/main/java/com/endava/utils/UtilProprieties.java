@@ -1,39 +1,27 @@
 package com.endava.utils;
 
+import org.apache.log4j.Logger;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class UtilProprieties {
-            public static final Logger LOGGER = Logger.getLogger("UtilProprieties.java");
-            protected static FileHandler fh;
+
+            private static final Logger logger = ProjectLogger.getInstance(UtilProprieties.class);
+
             protected static Properties appProps = null;
 
     public UtilProprieties(String srcToConfigFile) {
-                setLoggingFile();
-                if (srcToConfigFile.equals("")) {
+              if (srcToConfigFile.equals("")) {
                     throw new NullPointerException("Path to file can't be empty");
                 } else {
             getProprietiesFile(srcToConfigFile);
         }
     }
 
-    private static void setLoggingFile() {
-        try {
-            fh = new FileHandler("C:\\Users\\ababus\\IdeaProjects\\HW_ModularityProject\\ModularityProject\\Utils\\src\\main\\resources\\MavenAppLogFile.log");
-            LOGGER.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     private void getProprietiesFile(String configPath) {
 
@@ -41,7 +29,7 @@ public class UtilProprieties {
             appProps = new Properties();
             appProps.load(new FileInputStream(configPath));
         } catch (Exception ex) {
-            LOGGER.info(ex.getMessage());
+            logger.error(ex.getMessage());
         }
     }
 
@@ -55,27 +43,49 @@ public class UtilProprieties {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.info(ex.getMessage());
+            logger.error(ex.getMessage());
         }
         return mapForProprieties;
     }
 
     public HashMap getNumericalProprieties() {
-        HashMap<String, Number> mapForIntProprieties = new HashMap();
+        HashMap<String, Number> mapForNumProprieties = new HashMap();
         try {
             for (String key : appProps.stringPropertyNames()) {
-                if (isNumber(appProps.getProperty(key))) {
-                    mapForIntProprieties.put(key, Float.parseFloat(appProps.getProperty(key)));
+                if (isNumber(appProps.getProperty(key)) && !isInt(appProps.getProperty(key))) {
+                    mapForNumProprieties.put(key, Float.parseFloat(appProps.getProperty(key)));
                 }
             }
         } catch (Exception ex) {
-            LOGGER.info(ex.getMessage());
+            logger.error(ex.getMessage());
+        }
+        return mapForNumProprieties;
+    }
+
+    public HashMap getIntProprieties() {
+        HashMap<String, Integer> mapForIntProprieties = new HashMap();
+        try {
+            for (String key : appProps.stringPropertyNames()) {
+                if (isInt(appProps.getProperty(key))) {
+                    mapForIntProprieties.put(key, Integer.parseInt(appProps.getProperty(key)));
+                }
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
         }
         return mapForIntProprieties;
     }
 
-    private static boolean isNumber(String s) {
-        return s.trim().matches("[0-9]*\\.?[0-9]");
+    public static boolean isInt(String s) {
+        return s.trim().matches("\\d+");
+        //[0-9] any number
+        // *    0 or more of preceding token
+        // \\   escape next symbol ( in my case - dot)
+        // ?    match between 0 and 1 of the preceding token
+    }
+
+    public static boolean isNumber(String s) {
+        return s.trim().matches("[0-9]*\\.?[0-9]*");
         //[0-9] any number
         // *    0 or more of preceding token
         // \\   escape next symbol ( in my case - dot)
